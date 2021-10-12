@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerDetApi", "CustomerD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerDetMigrations", "CustomerDetMigrations\CustomerDetMigrations.csproj", "{D9EEBE62-A3F9-4F85-BF08-E628E6E5B6CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerDetWebApp", "CustomerDetWebApp\CustomerDetWebApp.csproj", "{631AC23A-26CB-4855-995E-35436B620E30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D9EEBE62-A3F9-4F85-BF08-E628E6E5B6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9EEBE62-A3F9-4F85-BF08-E628E6E5B6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9EEBE62-A3F9-4F85-BF08-E628E6E5B6CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{631AC23A-26CB-4855-995E-35436B620E30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{631AC23A-26CB-4855-995E-35436B620E30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{631AC23A-26CB-4855-995E-35436B620E30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{631AC23A-26CB-4855-995E-35436B620E30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
