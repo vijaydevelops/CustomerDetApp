@@ -1,23 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\**" />
-    <Compile Remove="Reference\**" />
-    <Content Remove="Models\**" />
-    <Content Remove="Reference\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <EmbeddedResource Remove="Reference\**" />
-    <None Remove="Models\**" />
-    <None Remove="Reference\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Controllers\WeatherForecastController.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
@@ -35,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CustomerDetMigrations\CustomerDetMigrations.csproj" />
+    <Folder Include="Database\" />
   </ItemGroup>
-
 
 </Project>

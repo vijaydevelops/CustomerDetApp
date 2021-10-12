@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CustomerDetApi.Migrations
+namespace CustomerDetMigrations.Migrations
 {
     public partial class InitialCreateCustomerDet : Migration
     {

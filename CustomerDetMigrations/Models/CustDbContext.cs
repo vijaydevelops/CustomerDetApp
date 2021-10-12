@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-// using CustomerDetApi.Models;
+// using CustomerDetMigrations.Models;
 
-namespace CustomerDetApi.Models
+namespace CustomerDetMigrations.Models
 {
     public class CustDbContext : DbContext
     {
@@ -13,7 +13,10 @@ namespace CustomerDetApi.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-            .UseSqlite(@"Data Source = Database/CustomerDet.db;");
+            .UseSqlite(
+                @"Data Source = ../CustomerDetMigrations/Database/CustomerDet.db;"
+                //, x => x.MigrationsAssembly("CustomerDetApp.CustomerDetMigrations")
+            );
         }
 
         public DbSet<Customer> Customers { get; set; }

@@ -40,3 +40,5 @@ PM> EntityFrameworkCore\Update-Database
 
 PS> dotnet ef migrations remove -f
 PM> EntityFrameworkCore\Remove-Migration
+
+PM> EntityFrameworkCore\Add-Migration InitialCreateCustomerDet -Context CustDbContext
