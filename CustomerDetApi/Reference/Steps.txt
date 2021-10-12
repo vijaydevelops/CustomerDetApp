@@ -1,0 +1,42 @@
+﻿##Db used : Sqlite
+
+##Installed packages
+	Microsoft.EntityFrameworkCore
+	Microsoft.EntityFrameworkCore.Design
+	Microsoft.EntityFrameworkCore.Tools
+	Microsoft.EntityFrameworkCore.Sqlite
+
+
+##Updating / Cretaing DB - Sqlite from Code entities
+
+## This projects is created  with code-first method
+
+##In cmd / powershell::
+
+> dotnet tool install --global dotnet-ef
+#You can invoke the tool using the following command: dotnet-ef
+#Tool 'dotnet-ef' (version '5.0.10') was successfully installed.
+
+> dotnet ef migrations add CustomerDetMigration -c CustDbContext
+#Build started...
+#Build succeeded.
+#Done. To undo this action, use 'ef migrations remove'
+
+##Migrations folder created
+
+
+
+##In Package Manager Console
+
+PM> EntityFrameworkCore\Add-Migration InitialCreate
+##InitialCreate.cs create
+
+PM> EntityFrameworkCore\Update-Database
+#Build started...
+#Build succeeded.
+#Applying migration '20211012121729_CustomerDetMigration'.
+#Applying migration '20211012122007_InitialCreate'.
+#Done
+
+PS> dotnet ef migrations remove -f
+PM> EntityFrameworkCore\Remove-Migration

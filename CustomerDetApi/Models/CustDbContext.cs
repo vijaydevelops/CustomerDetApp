@@ -13,15 +13,17 @@ namespace CustomerDetApi.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-            .UseSqlite(@"Data Source = Students.db;");
+            .UseSqlite(@"Data Source = Database/CustomerDet.db;");
         }
 
-        public DbSet<Customer> StudentsInfo { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Customer> Countries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>().HasData(
                 new Customer() { Id = 1, custCode = "C0101", custName = "NAGPUR JAMESON TRADERS", custAddress = "69, Jameson street, Nagpur", custContactNo = "+919456789456", custEmail = "jameson@custdemoapi.com", country = 1 },
-                new Customer() { Id = 1, custCode = "C0102", custName = "LALJI PAN MASALA", custAddress = "12/75, Bahadur Sastri Nagar, Indranagar, Bangalore", custContactNo = "+919475645456", custEmail = "laji.pan@gmail.com", country = 1 }
+                new Customer() { Id = 2, custCode = "C0102", custName = "LALJI PAN MASALA", custAddress = "12/75, Bahadur Sastri Nagar, Indranagar, Bangalore", custContactNo = "+919475645456", custEmail = "laji.pan@gmail.com", country = 1 }
             );
 
             modelBuilder.Entity<Country>().HasData(
