@@ -185,36 +185,40 @@ namespace CustomerDetWebApp.Controllers
                     var cust_dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var content2 = new FormUrlEncodedContent(cust_dict);
-
                     HttpResponseMessage response = await client.PostAsync(apiUrl, content);
                     var resp_contents = await response.Content.ReadAsStringAsync();
                     var r1 = response.IsSuccessStatusCode;
 
+                    /*
+                    var content2 = new FormUrlEncodedContent(cust_dict);
                     HttpResponseMessage response2 = await client.PostAsync(apiUrl, content);
                     var resp_contents2 = await response2.Content.ReadAsStringAsync();
                     var r2 = response2.IsSuccessStatusCode;
+                    */
 
+                    // TEST RESULT : Both techniques work
 
                     if (response.IsSuccessStatusCode)
                     {
                         var data = resp_contents; //  await response.Content.ReadAsStringAsync();
-                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
+                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(data);
                         
-                        ViewBag.ReturnedMessage = messageData.message;
+                        ViewBag.ReturnedMessage = "Data Successfully added";
                         return RedirectToAction(nameof(Index));
                     }
+                    /*
                     else if (response2.IsSuccessStatusCode)
                     {
                         var data = resp_contents2; // await response2.Content.ReadAsStringAsync();
-                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
-
-                        ViewBag.ReturnedMessage = messageData.message;
+                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(data);
+                        
+                        ViewBag.ReturnedMessage = "Data Successfully added";
                         return RedirectToAction(nameof(Index));
                     }
+                    */
                     else
                     {
-                        var resp = response;
+                        var resp = response; // for test, check resp_contents value
 
                         ViewBag.ReturnedMessage = "Failed saving customer data";
                         return RedirectToAction(nameof(Index));
