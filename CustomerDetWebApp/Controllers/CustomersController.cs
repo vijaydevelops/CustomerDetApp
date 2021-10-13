@@ -52,6 +52,8 @@ namespace CustomerDetWebApp.Controllers
                         // var table = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Data.DataTable>(data);
                         var customers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Customer>>(data);
 
+                        ViewBag.ReturnedMessage = "OK";
+
                         return View(customers);
                     }
                     else
@@ -79,7 +81,7 @@ namespace CustomerDetWebApp.Controllers
             {
                 // return NotFound();
                 ViewBag.ReturnedMessage = "Customer Id required to get details..";
-                return View(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -89,7 +91,7 @@ namespace CustomerDetWebApp.Controllers
                 {
                     // return NotFound();
                     ViewBag.ReturnedMessage = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
-                    return View(nameof(Index));
+                    return RedirectToAction(nameof(Index));
                 }
                 else
                 {
@@ -179,23 +181,43 @@ namespace CustomerDetWebApp.Controllers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var content = new StringContent(JsonConvert.SerializeObject(customer), Encoding.UTF8, "application/json");
+                    var json = JsonConvert.SerializeObject(customer);
+                    var cust_dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var content2 = new FormUrlEncodedContent(cust_dict);
 
                     HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+                    var resp_contents = await response.Content.ReadAsStringAsync();
+                    var r1 = response.IsSuccessStatusCode;
+
+                    HttpResponseMessage response2 = await client.PostAsync(apiUrl, content);
+                    var resp_contents2 = await response2.Content.ReadAsStringAsync();
+                    var r2 = response2.IsSuccessStatusCode;
+
+
                     if (response.IsSuccessStatusCode)
                     {
-                        var data = await response.Content.ReadAsStringAsync();
+                        var data = resp_contents; //  await response.Content.ReadAsStringAsync();
                         var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
                         
                         ViewBag.ReturnedMessage = messageData.message;
-                        return View(nameof(Index));
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else if (response2.IsSuccessStatusCode)
+                    {
+                        var data = resp_contents2; // await response2.Content.ReadAsStringAsync();
+                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
+
+                        ViewBag.ReturnedMessage = messageData.message;
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         var resp = response;
 
                         ViewBag.ReturnedMessage = "Failed saving customer data";
-                        return View(nameof(Index));
+                        return RedirectToAction(nameof(Index));
                     }
                 }
             } 
@@ -218,7 +240,7 @@ namespace CustomerDetWebApp.Controllers
             {
                 // return NotFound();
                 ViewBag.ReturnedMessage = "Customer Id required to update details..";
-                return View(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -228,7 +250,7 @@ namespace CustomerDetWebApp.Controllers
                 {
                     // return NotFound();
                     ViewBag.ReturnedMessage = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
-                    return View(nameof(Index));
+                    return RedirectToAction(nameof(Index));
                 }
                 else
                 {

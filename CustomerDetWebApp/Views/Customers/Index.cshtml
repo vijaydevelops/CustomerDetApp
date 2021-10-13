@@ -97,3 +97,12 @@
         }
     });
 </script>
+
+@if(ViewBag.ReturnedMessage != null)
+{
+<script>
+    $(document).ready(function () {
+        alert( @ViewBag.ReturnedMessage.ToString() );
+    })
+</script>
+}

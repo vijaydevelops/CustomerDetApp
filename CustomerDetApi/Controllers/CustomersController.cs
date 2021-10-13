@@ -30,7 +30,7 @@ namespace CustomerDetApi.Controllers
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
-        [Route("api/customers/{id}")]
+        // [Route("api/customers/{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(long id)
         {
             var customer = await _context.Customers
@@ -49,8 +49,8 @@ namespace CustomerDetApi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         // [HttpPut("{id}")]
-        [HttpPost("{id}")]
-        [Route("api/customers/edit/{id}")]
+        [HttpPost("edit/{id}")]
+        // [Route("api/customers/edit/{id}")]
         public async Task<IActionResult> PutCustomer(long id, Customer customer)
         {
             if (id != customer.Id)
@@ -82,8 +82,8 @@ namespace CustomerDetApi.Controllers
         // POST: api/Customers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        [Route("api/customers/create")]
+        [HttpPost("create")]
+        // [Route("api/customers/create")]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
             _context.Customers.Add(customer);
@@ -95,8 +95,8 @@ namespace CustomerDetApi.Controllers
 
         // DELETE: api/Customers/5
         //[HttpDelete("{id}")]
-        [HttpPost("{id}")]
-        [Route("api/customers/delete/{id}")]
+        // [Route("api/customers/delete/{id}")]
+        [HttpPost("delete/{id}")]
         public async Task<ActionResult<MessageReturn>> DeleteCustomer(long id)
         {
             var customer = await _context.Customers.FindAsync(id);
