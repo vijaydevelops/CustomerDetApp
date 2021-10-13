@@ -15,6 +15,20 @@ namespace CustomerDetMigrations.Models
         public string custAddress { get; set; }
         public int country { get; set; }
         public string custEmail { get; set; }
-        public string custContactNo { get; set; } 
+        public string custContactNo { get; set; }
+
+        private int _isDeleted = 0;
+
+        public int isDeleted 
+        { 
+            get
+            {
+                return _isDeleted;
+            }
+            set
+            {
+                _isDeleted = value;
+            } 
+        }
     }
 }

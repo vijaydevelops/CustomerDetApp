@@ -31,7 +31,8 @@ namespace CustomerDetMigrations.Migrations
                     custAddress = table.Column<string>(type: "TEXT", nullable: true),
                     country = table.Column<int>(type: "INTEGER", nullable: false),
                     custEmail = table.Column<string>(type: "TEXT", nullable: true),
-                    custContactNo = table.Column<string>(type: "TEXT", nullable: true)
+                    custContactNo = table.Column<string>(type: "TEXT", nullable: true),
+                    isDeleted = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,13 +131,13 @@ namespace CustomerDetMigrations.Migrations
 
             migrationBuilder.InsertData(
                 table: "Customer",
-                columns: new[] { "Id", "country", "custAddress", "custCode", "custContactNo", "custEmail", "custName" },
-                values: new object[] { 1L, 1, "69, Jameson street, Nagpur", "C0101", "+919456789456", "jameson@custdemoapi.com", "NAGPUR JAMESON TRADERS" });
+                columns: new[] { "Id", "country", "custAddress", "custCode", "custContactNo", "custEmail", "custName", "isDeleted" },
+                values: new object[] { 1L, 1, "69, Jameson street, Nagpur", "C0101", "+919456789456", "jameson@custdemoapi.com", "NAGPUR JAMESON TRADERS", 0 });
 
             migrationBuilder.InsertData(
                 table: "Customer",
-                columns: new[] { "Id", "country", "custAddress", "custCode", "custContactNo", "custEmail", "custName" },
-                values: new object[] { 2L, 1, "12/75, Bahadur Sastri Nagar, Indranagar, Bangalore", "C0102", "+919475645456", "laji.pan@gmail.com", "LALJI PAN MASALA" });
+                columns: new[] { "Id", "country", "custAddress", "custCode", "custContactNo", "custEmail", "custName", "isDeleted" },
+                values: new object[] { 2L, 1, "12/75, Bahadur Sastri Nagar, Indranagar, Bangalore", "C0102", "+919475645456", "laji.pan@gmail.com", "LALJI PAN MASALA", 0 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

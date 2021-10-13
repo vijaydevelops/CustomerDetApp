@@ -1,0 +1,99 @@
+﻿@model IEnumerable<CustomerDetMigrations.Models.Customer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.custCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.custName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.custAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.custEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.custContactNo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.custCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.custName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.custAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.custEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.custContactNo)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+
+                <form asp-action="Delete2" method="post" >
+                    <input type="text" asp-for="@item.Id" style="display:none;" />
+                    <a href="#"><input type="submit" value="Delete" class="btn btn-primary delcnfm" /></a>
+                </form>
+
+                
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<script>
+    $('.delcnfm').on('click', function (e) {
+        e.preventDefault()
+        if (confirm('Proceed to delete this customer ?')) {
+            var datastring = $(this).closest('form').serialize();
+            console.log(datastring)
+            $.ajax({
+                type: "POST",
+                url: $(this).closest('form').attr('action'),
+                data: datastring,
+                dataType: "json",
+                success: function (data) {
+                    //var obj = jQuery.parseJSON(data); if the dataType is not specified as json uncomment this
+                    // do what ever you want with the server response
+                    console.log(data)
+                },
+                error: function (err) {
+                    alert('error : ' + err);
+                    console.log(err)
+                }
+            });
+
+            // $(this).closest('form').submit();
+        }
+    });
+</script>

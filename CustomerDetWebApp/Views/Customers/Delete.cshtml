@@ -1,0 +1,57 @@
+﻿@model CustomerDetMigrations.Models.Customer
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Customer</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.custCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.custCode)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.custName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.custName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.custAddress)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.custAddress)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.country)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.country)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.custEmail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.custEmail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.custContactNo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.custContactNo)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

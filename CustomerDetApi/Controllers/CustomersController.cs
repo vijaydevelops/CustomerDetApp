@@ -22,16 +22,20 @@ namespace CustomerDetApi.Controllers
 
         // GET: api/Customers
         [HttpGet]
+        // [Route("api/customers")]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers.Where(x=>x.isDeleted ==0).ToListAsync();
         }
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
+        [Route("api/customers/{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(long id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers
+                                    .Where(x => x.isDeleted == 0 && x.Id == id).FirstOrDefaultAsync();
+                                    // .FindAsync(id);
 
             if (customer == null)
             {
@@ -44,7 +48,9 @@ namespace CustomerDetApi.Controllers
         // PUT: api/Customers/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
+        // [HttpPut("{id}")]
+        [HttpPost("{id}")]
+        [Route("api/customers/edit/{id}")]
         public async Task<IActionResult> PutCustomer(long id, Customer customer)
         {
             if (id != customer.Id)
@@ -77,17 +83,21 @@ namespace CustomerDetApi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Route("api/customers/create")]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+            // return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+            return CreatedAtAction("GetCustomer", new { id = customer.Id });
         }
 
         // DELETE: api/Customers/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Customer>> DeleteCustomer(long id)
+        //[HttpDelete("{id}")]
+        [HttpPost("{id}")]
+        [Route("api/customers/delete/{id}")]
+        public async Task<ActionResult<MessageReturn>> DeleteCustomer(long id)
         {
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
@@ -95,10 +105,30 @@ namespace CustomerDetApi.Controllers
                 return NotFound();
             }
 
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            customer.isDeleted = 1;
 
-            return customer;
+            // _context.Customers.Remove(customer);
+            // await _context.SaveChangesAsync();
+
+            _context.Entry(customer).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CustomerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return new MessageReturn { message = "Already Deleted / Unknown Id" };
+                }
+            }
+
+            return new MessageReturn { message = "Customer Data Successfully Deleted" };
         }
 
         private bool CustomerExists(long id)
@@ -106,4 +136,6 @@ namespace CustomerDetApi.Controllers
             return _context.Customers.Any(e => e.Id == id);
         }
     }
+
+    
 }

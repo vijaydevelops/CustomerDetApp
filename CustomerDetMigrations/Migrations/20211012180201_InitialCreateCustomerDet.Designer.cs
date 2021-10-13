@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomerDetMigrations.Migrations
 {
     [DbContext(typeof(CustDbContext))]
-    [Migration("20211012135901_InitialCreateCustomerDet")]
+    [Migration("20211012180201_InitialCreateCustomerDet")]
     partial class InitialCreateCustomerDet
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,6 +168,9 @@ namespace CustomerDetMigrations.Migrations
                     b.Property<string>("custName")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("isDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Customer");
@@ -181,7 +184,8 @@ namespace CustomerDetMigrations.Migrations
                             custCode = "C0101",
                             custContactNo = "+919456789456",
                             custEmail = "jameson@custdemoapi.com",
-                            custName = "NAGPUR JAMESON TRADERS"
+                            custName = "NAGPUR JAMESON TRADERS",
+                            isDeleted = 0
                         },
                         new
                         {
@@ -191,7 +195,8 @@ namespace CustomerDetMigrations.Migrations
                             custCode = "C0102",
                             custContactNo = "+919475645456",
                             custEmail = "laji.pan@gmail.com",
-                            custName = "LALJI PAN MASALA"
+                            custName = "LALJI PAN MASALA",
+                            isDeleted = 0
                         });
                 });
 #pragma warning restore 612, 618
