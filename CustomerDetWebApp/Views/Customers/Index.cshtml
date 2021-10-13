@@ -21,7 +21,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.custAddress)
             </th>
-            <th>
+            <th style="display:none;">
                 @Html.DisplayNameFor(model => model.country)
             </th>
             <th>
@@ -45,7 +45,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.custAddress)
             </td>
-            <td>
+            <td style="display:none;">
                 @Html.DisplayFor(modelItem => item.country)
             </td>
             <td>
@@ -57,10 +57,9 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-
+                
                 <form asp-action="Delete2" method="post" >
-                    <input type="text" asp-for="@item.Id" style="display:none;" />
+                    <input type="text" value="@item.Id" name="Id" style="display:none;" />
                     <a href="#"><input type="submit" value="Delete" class="btn btn-primary delcnfm" /></a>
                 </form>
 
@@ -81,14 +80,20 @@
                 type: "POST",
                 url: $(this).closest('form').attr('action'),
                 data: datastring,
-                dataType: "json",
+                // dataType: "json",
                 success: function (data) {
                     //var obj = jQuery.parseJSON(data); if the dataType is not specified as json uncomment this
                     // do what ever you want with the server response
-                    console.log(data)
+                    // console.log(data)
+
+                    alert(data);
+
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 500)
                 },
                 error: function (err) {
-                    alert('error : ' + err);
+                    alert('error : ' + err.responseText);
                     console.log(err)
                 }
             });
@@ -102,7 +107,7 @@
 {
 <script>
     $(document).ready(function () {
-        alert( @ViewBag.ReturnedMessage.ToString() );
+        alert( @Html.Raw( Json.Serialize( ViewBag.ReturnedMessage.ToString() ) ) );
     })
 </script>
 }

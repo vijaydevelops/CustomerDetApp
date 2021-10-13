@@ -33,6 +33,11 @@ namespace CustomerDetWebApp.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
+            if(TempData["ReturnedMessage"] != null)
+            {
+                ViewBag.ReturnedMessage = TempData["ReturnedMessage"];
+            }
+
             string baseUrl = _config.GetValue<string>(
                     "WebAPIBaseUrl");
             string apiUrl = baseUrl + "customers";
@@ -52,7 +57,7 @@ namespace CustomerDetWebApp.Controllers
                         // var table = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Data.DataTable>(data);
                         var customers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Customer>>(data);
 
-                        ViewBag.ReturnedMessage = "OK";
+                        // ViewBag.ReturnedMessage = "Success";
 
                         return View(customers);
                     }
@@ -77,10 +82,15 @@ namespace CustomerDetWebApp.Controllers
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(long? id)
         {
+            if (TempData["ReturnedMessage"] != null)
+            {
+                ViewBag.ReturnedMessage = TempData["ReturnedMessage"];
+            }
+
             if (id == null)
             {
                 // return NotFound();
-                ViewBag.ReturnedMessage = "Customer Id required to get details..";
+                TempData["ReturnedMessage"] = "Customer Id required to get details..";
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -90,7 +100,7 @@ namespace CustomerDetWebApp.Controllers
                 if (customer_withInfo.Item1 == null)
                 {
                     // return NotFound();
-                    ViewBag.ReturnedMessage = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
+                    TempData["ReturnedMessage"] = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -152,6 +162,11 @@ namespace CustomerDetWebApp.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
+            if (TempData["ReturnedMessage"] != null)
+            {
+                ViewBag.ReturnedMessage = TempData["ReturnedMessage"];
+            }
+
             return View();
         }
 
@@ -175,55 +190,19 @@ namespace CustomerDetWebApp.Controllers
                    "WebAPIBaseUrl");
                 string apiUrl = baseUrl + "customers/create";
 
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var json = JsonConvert.SerializeObject(customer);
-                    var cust_dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                var customer_withInfo = await postSingleItemData(apiUrl, customer);
 
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync(apiUrl, content);
-                    var resp_contents = await response.Content.ReadAsStringAsync();
-                    var r1 = response.IsSuccessStatusCode;
+                TempData["ReturnedMessage"] = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
+                return RedirectToAction(nameof(Index));
 
-                    /*
-                    var content2 = new FormUrlEncodedContent(cust_dict);
-                    HttpResponseMessage response2 = await client.PostAsync(apiUrl, content);
-                    var resp_contents2 = await response2.Content.ReadAsStringAsync();
-                    var r2 = response2.IsSuccessStatusCode;
-                    */
+                /*
+                if (customer_withInfo.Item1 == null){
 
-                    // TEST RESULT : Both techniques work
+                } else{   
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var data = resp_contents; //  await response.Content.ReadAsStringAsync();
-                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(data);
-                        
-                        ViewBag.ReturnedMessage = "Data Successfully added";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    /*
-                    else if (response2.IsSuccessStatusCode)
-                    {
-                        var data = resp_contents2; // await response2.Content.ReadAsStringAsync();
-                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(data);
-                        
-                        ViewBag.ReturnedMessage = "Data Successfully added";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    */
-                    else
-                    {
-                        var resp = response; // for test, check resp_contents value
-
-                        ViewBag.ReturnedMessage = "Failed saving customer data";
-                        return RedirectToAction(nameof(Index));
-                    }
                 }
+                */
             } 
             else
             {
@@ -236,14 +215,88 @@ namespace CustomerDetWebApp.Controllers
 
 
 
+        public async Task<Tuple<Customer, string>> postSingleItemData(string apiUrl, Customer cust, bool isUpdate = false)
+        {
+
+            string statusMessage = "";
+
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                var json = JsonConvert.SerializeObject(cust);
+                var cust_dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+                // var resp_contents = await response.Content.ReadAsStringAsync(); // for testing
+                // var r1 = response.IsSuccessStatusCode; // for testing
+
+                /*
+                var content2 = new FormUrlEncodedContent(cust_dict);
+                HttpResponseMessage response2 = await client.PostAsync(apiUrl, content);
+                var resp_contents2 = await response2.Content.ReadAsStringAsync();
+                var r2 = response2.IsSuccessStatusCode;
+                */
+
+                // TEST RESULT : Both techniques work
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var resp_contents = await response.Content.ReadAsStringAsync();
+                    // var data = resp_contents; //  await response.Content.ReadAsStringAsync();
+                    var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(resp_contents);
+
+                    // TempData["ReturnedMessage"] = "Data Successfully added";
+                    // return RedirectToAction(nameof(Index));
+
+                    statusMessage = !isUpdate ?"Customer Data saved successfully" : "Customer Data updated successfully";
+
+                    return (new Tuple<Customer, string>(messageData, statusMessage));
+
+                }
+                /*
+                else if (response2.IsSuccessStatusCode)
+                {
+                    var data = resp_contents2; // await response2.Content.ReadAsStringAsync();
+                    var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(data);
+
+                    TempData["ReturnedMessage"] = "Data Successfully added";
+                    return RedirectToAction(nameof(Index));
+                }
+                */
+                else
+                {
+                    // for test, check resp_contents value
+
+                    // TempData["ReturnedMessage"] = "Failed saving customer data";
+                    // return RedirectToAction(nameof(Index));
+
+                    statusMessage = !isUpdate ?"Failed saving customer data" : "Failed updating customer data";
+                    return (new Tuple<Customer, string>(null, statusMessage));
+                }
+            }
+        }
+
+
+
 
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
+            if (TempData["ReturnedMessage"] != null)
+            {
+                ViewBag.ReturnedMessage = TempData["ReturnedMessage"];
+            }
+
             if (id == null)
             {
                 // return NotFound();
-                ViewBag.ReturnedMessage = "Customer Id required to update details..";
+                TempData["ReturnedMessage"] = "Customer Id required to update details..";
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -253,7 +306,7 @@ namespace CustomerDetWebApp.Controllers
                 if (customer_withInfo.Item1 == null)
                 {
                     // return NotFound();
-                    ViewBag.ReturnedMessage = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
+                    TempData["ReturnedMessage"] = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -275,7 +328,7 @@ namespace CustomerDetWebApp.Controllers
         {
             if(id != customer.Id)
             {
-                ViewBag.ReturnedMessage = "Posted data does not match requested Id..";
+                TempData["ReturnedMessage"] = "Posted data does not match requested Id..";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -291,56 +344,78 @@ namespace CustomerDetWebApp.Controllers
                    "WebAPIBaseUrl");
                 string apiUrl = baseUrl + "customers/edit/" + id;
 
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                var customer_withInfo = await postSingleItemData(apiUrl, customer, isUpdate: true);
 
-                    var content = new StringContent(JsonConvert.SerializeObject(customer), Encoding.UTF8, "application/json");
+                TempData["ReturnedMessage"] = customer_withInfo.Item2; // "Requested Customer Id does not exist..";
+                return RedirectToAction(nameof(Index));
 
-                    HttpResponseMessage response = await client.PostAsync(apiUrl, content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var data = await response.Content.ReadAsStringAsync();
-                        var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
+                /*
+                if (customer_withInfo.Item1 == null){
 
-                        ViewBag.ReturnedMessage = messageData.message;
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.ReturnedMessage = "Failed saving customer data";
-                        return RedirectToAction(nameof(Index));
-                    }
+                } else{   
+
                 }
+                */
             }
 
             ViewBag.ReturnedMessage = "Data invalid..";
             return View(customer);
         }
 
-
+        // FOR TESTING INITIALY USED
         [HttpPost, ActionName("Delete2")]
         [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> DeleteConfirmed([Bind("item.Id")] Customer cust)
-        public async Task<string> DeleteConfirmed2()
+        public async Task<string> DeleteConfirmed2([Bind("Id")] Customer cust)
         {
+            long x_id = cust.Id;
+            /*
             Request.EnableBuffering();
             var jsonData = await new StreamReader(Request.Body).ReadToEndAsync();
-            return jsonData;
+            // return jsonData;
+            */
+            string baseUrl = _config.GetValue<string>(
+                   "WebAPIBaseUrl");
+            string apiUrl = baseUrl + "customers/delete/" + x_id;
 
-            // var content = new StringContent(JsonConvert.SerializeObject(jsonData), Encoding.UTF8, "application/json");
-            // return Json(content);
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                var content = new StringContent(JsonConvert.SerializeObject(new { id = x_id }), Encoding.UTF8, "application/json");
+                // stringcontent used to generate headers
+
+                HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
+
+                    TempData["ReturnedMessage"] = messageData.message;
+                    
+                }
+                else
+                {
+                    TempData["ReturnedMessage"] = "Failed deleting selected customer";
+                }
+
+
+                return TempData["ReturnedMessage"].ToString();
+
+                // stringcontent used to generate headers
+                // return new StringContent(TempData["ReturnedMessage"].ToString(), Encoding.UTF8, "text/plain");
+            }
+
         }
 
 
-
+        // NEEDS LEARNING
         // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         // public async Task<IActionResult> DeleteConfirmed([Bind("item.Id")] Customer cust)
-        public async Task<IActionResult> DeleteConfirmed([FromBody] Customer cust)
+        public async Task<IActionResult> DeleteConfirmed([FromBody] int id)
         {
             // dynamic obj = await Request.Content.ReadAsAsync<JObject>();
             // var y = obj.var1;
@@ -350,7 +425,10 @@ namespace CustomerDetWebApp.Controllers
             /*
             Validate.IsNotNull("formDataCollection", formDataCollection);
             */
-            var x_id = cust.Id;
+            var x_id = id;
+
+            Request.EnableBuffering();
+            var jsonData = await new StreamReader(Request.Body).ReadToEndAsync();
             
 
             /*
@@ -376,12 +454,12 @@ namespace CustomerDetWebApp.Controllers
                     var data = await response.Content.ReadAsStringAsync();
                     var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<MessageReturn>(data);
 
-                    ViewBag.ReturnedMessage = messageData.message;
+                    TempData["ReturnedMessage"] = messageData.message;
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
-                    ViewBag.ReturnedMessage = "Failed deleting selected customer";
+                    TempData["ReturnedMessage"] = "Failed deleting selected customer";
                     return RedirectToAction(nameof(Index));
                 }
             }
